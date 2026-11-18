@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book an Appointment | Kori's Place</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            color-scheme: dark;
+            --bg: #0b0b0b;
+            --bg2: #131313;
+            --bg3: #1a1a1a;
+            --line: #2a2a2a;
+            --line2: #3f3f3f;
+            --text: #e4e4e4;
+            --muted: #9b9b9b;
+            --dim: #858585;
+            --display: "Cormorant Garamond", "Cormorant", "Playfair Display", Georgia, "Times New Roman", serif;
+            --sans: "Jost", "Helvetica Neue", Helvetica, Arial, sans-serif;
+            --gut: clamp(20px, 5vw, 64px);
+        }
+        * { box-sizing: border-box; }
+        body { margin: 0; background: var(--bg); color: var(--text); font-family: var(--sans); font-weight: 300; font-size: 16px; line-height: 1.75; letter-spacing: 0.01em; -webkit-font-smoothing: antialiased; }
+        h1, h2, h3 { font-family: var(--display); font-weight: 400; line-height: 1.02; letter-spacing: 0; margin: 0; color: var(--text); }
+        em { font-style: italic; font-weight: 400; color: var(--muted); }
+        a { color: inherit; }
+        ::placeholder { color: #6c6c6c; opacity: 1; }
+        :focus-visible { outline: 2px solid var(--text); outline-offset: 3px; }
+
+        /* Ticker */
+        .marquee { background: #000; color: var(--muted); overflow: hidden; white-space: nowrap; font-size: 11px; font-weight: 400; letter-spacing: 0.24em; text-transform: uppercase; padding: 11px 0; border-bottom: 1px solid var(--line); }
+        .marquee .track { display: inline-flex; animation: scroll 50s linear infinite; }
+        .marquee .group { display: inline-flex; }
+        .marquee .group span { padding: 0 22px; }
+        @keyframes scroll { to { transform: translateX(-50%); } }
+
+        /* Header */
+        header.site {
+            position: sticky; top: 0; z-index: 50;
+            background: rgba(11, 11, 11, 0.94); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+            border-bottom: 1px solid var(--line);
+            display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap;
+            padding: 14px var(--gut);
+        }
+        .logo { display: inline-flex; align-items: center; gap: 12px; text-decoration: none; color: var(--text); }
+        .logo .mark { width: 42px; height: 42px; border-radius: 50%; background: var(--text); color: #0b0b0b; display: flex; align-items: center; justify-content: center; font-family: var(--display); font-weight: 600; font-size: 17px; letter-spacing: 0.02em; }
+        .logo .word { font-family: var(--display); font-style: italic; font-weight: 500; font-size: 30px; line-height: 1; }
+        nav ul { list-style: none; margin: 0; padding: 0; display: flex; align-items: center; gap: 36px; }
+        nav a { font-size: 11.5px; font-weight: 400; letter-spacing: 0.2em; text-transform: uppercase; text-decoration: none; color: var(--muted); padding-bottom: 4px; background: linear-gradient(var(--text), var(--text)) left bottom / 0 1px no-repeat; transition: background-size 0.3s, color 0.3s; }
+        nav a:hover, nav a[aria-current="page"] { color: var(--text); background-size: 100% 1px; }
+        nav a.nav-book { background: transparent; color: var(--text); padding: 12px 24px; border: 1px solid var(--text); border-radius: 999px; transition: background 0.25s, color 0.25s; }
+        nav a.nav-book::after { content: " \2192"; }
+        nav a.nav-book:hover { background: var(--text); color: #0b0b0b; }
+        .hamburger { display: none; background: none; border: 1px solid var(--line2); border-radius: 999px; width: 44px; height: 44px; font-size: 20px; line-height: 1; cursor: pointer; color: var(--text); }
+
+        /* Buttons */
+        .btn { display: inline-flex; align-items: center; justify-content: center; font: inherit; font-size: 11.5px; font-weight: 400; letter-spacing: 0.2em; text-transform: uppercase; text-decoration: none; padding: 17px 34px; border: 1px solid var(--text); border-radius: 999px; background: var(--text); color: #0b0b0b; cursor: pointer; transition: background 0.25s, color 0.25s; }
+        .btn::after { content: "\2192"; margin-left: 10px; transition: transform 0.25s; }
+        .btn:hover { background: transparent; color: var(--text); }
+        .btn:hover::after { transform: translateX(5px); }
+        .btn.ghost { background: transparent; color: var(--text); }
+        .btn.ghost:hover { background: var(--text); color: #0b0b0b; }
+
+        /* Cards */
+        .card { display: flex; flex-direction: column; background: var(--bg2); border: 1px solid var(--line); transition: transform 0.35s, border-color 0.35s; }
+        .card:hover { transform: translateY(-5px); border-color: #6a6a6a; }
+        .card .photo { aspect-ratio: 3 / 4; background: #1b1b1b; color: var(--dim); display: flex; align-items: center; justify-content: center; font-size: 12px; letter-spacing: 0.16em; text-transform: uppercase; overflow: hidden; border-bottom: 1px solid var(--line); }
+        .card .photo img { width: 100%; height: 100%; object-fit: cover; object-position: center top; display: block; transition: transform 0.8s; }
+        .card:hover .photo img { transform: scale(1.04); }
+        .card .body { padding: 20px 20px 22px; display: flex; flex-direction: column; align-items: flex-start; gap: 10px; flex: 1; }
+        .card h2, .card h3 { font-style: italic; font-weight: 500; font-size: 28px; line-height: 1.05; }
+        .card .book { align-self: flex-start; display: inline-flex; align-items: center; font-size: 10.5px; font-weight: 400; letter-spacing: 0.18em; text-transform: uppercase; text-decoration: none; color: var(--text); border: 1px solid var(--line2); border-radius: 999px; padding: 10px 18px; transition: background 0.25s, color 0.25s, border-color 0.25s; }
+        .card .book::after { content: "\2192"; margin-left: 8px; transition: transform 0.25s; }
+        .card .book:hover { background: var(--text); color: #0b0b0b; border-color: var(--text); }
+        .card .book:hover::after { transform: translateX(4px); }
+        .kicker { margin: 0; font-size: 10.5px; font-weight: 400; letter-spacing: 0.24em; text-transform: uppercase; color: var(--dim); }
+
+        /* Footer */
+        footer { background: #000; color: var(--text); padding: clamp(56px, 8vw, 96px) var(--gut) 30px; border-top: 1px solid var(--line); }
+        footer .foot-grid { display: grid; grid-template-columns: 1.5fr 1fr 1fr 1.2fr; gap: 48px; max-width: 1240px; margin: 0 auto; text-align: left; }
+        footer .logo { margin-bottom: 20px; }
+        footer .foot-brand p { margin: 0 0 24px; color: var(--muted); font-size: 15px; max-width: 280px; }
+        footer h3 { font-family: var(--sans); font-size: 10.5px; font-weight: 400; letter-spacing: 0.24em; text-transform: uppercase; color: var(--dim); margin: 0 0 20px; }
+        footer ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 13px; }
+        footer li { font-size: 14px; color: var(--muted); }
+        footer a { color: var(--text); text-decoration: none; background: linear-gradient(var(--text), var(--text)) left bottom / 0 1px no-repeat; padding-bottom: 2px; transition: background-size 0.3s; }
+        footer a.btn, footer a.logo { background-image: none; padding-bottom: 0; }
+        footer a.btn { padding: 17px 34px; }
+        footer a:hover { background-size: 100% 1px; }
+        footer .foot-bottom { max-width: 1240px; margin: clamp(44px, 6vw, 72px) auto 0; padding-top: 24px; border-top: 1px solid var(--line); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 10px; }
+        footer .foot-bottom p { margin: 0; font-size: 10.5px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--dim); }
+
+        /* Gentle reveal */
+        .reveal { opacity: 0; transform: translateY(24px); transition: opacity 1s ease, transform 1s ease; }
+        .reveal.in { opacity: 1; transform: none; }
+
+        @media (max-width: 820px) {
+            .hamburger { display: block; }
+            nav { width: 100%; }
+            nav ul { display: none; flex-direction: column; align-items: flex-start; gap: 20px; padding: 22px 0 8px; }
+            nav ul.show { display: flex; }
+            .logo .word { font-size: 25px; }
+            .card h2, .card h3 { font-size: 21px; }
+            .card .body { padding: 14px 12px 16px; }
+            .card .book { font-size: 10px; padding: 8px 13px; }
+            footer .foot-grid { grid-template-columns: 1fr 1fr; gap: 40px 24px; }
+            footer .foot-brand { grid-column: 1 / -1; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .marquee .track, .badge svg { animation: none !important; }
+            .reveal { opacity: 1; transform: none; transition: none; }
+            .card, .card:hover { transition: none; }
+        }
+
+        .field { margin-bottom: 20px; }
+        label.lbl, form label.lbl { display: block; font-size: 10.5px; font-weight: 400; letter-spacing: 0.22em; text-transform: uppercase; color: var(--muted); margin: 0 0 9px; }
+        .optional { text-transform: none; letter-spacing: 0; color: var(--dim); }
+        input[type="text"], input[type="tel"], input[type="email"], input[type="date"], select, textarea {
+            width: 100%; font: inherit; font-size: 16px; padding: 14px 16px; border: 1px solid var(--line2); border-radius: 8px; background: var(--bg); color: var(--text);
+        }
+        input:focus, select:focus, textarea:focus { outline: none; border-color: var(--text); box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.08); }
+        textarea { min-height: 104px; resize: vertical; }
+        .hint { font-size: 13px; color: var(--dim); margin: 9px 0 0; line-height: 1.55; }
+        .panel { background: var(--bg2); border: 1px solid var(--line); padding: 32px; }
+        .panel h2 { font-size: 34px; font-weight: 400; }
+
+        main { max-width: 1120px; margin: 0 auto; padding: clamp(44px, 6vw, 84px) var(--gut) 80px; }
+        .intro { margin-bottom: 40px; }
+        .intro h1 { font-size: clamp(46px, 8vw, 116px); font-weight: 300; line-height: 0.96; margin-bottom: 20px; }
+        .intro p { margin: 0; max-width: 540px; font-size: 18px; color: var(--muted); }
+
+        .notice { border: 1px dashed var(--line2); padding: 24px 30px; margin: 0 0 44px; font-size: 15px; color: var(--muted); }
+        .notice h2 { font-size: 30px; font-weight: 400; margin-bottom: 14px; }
+        .notice ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 9px; }
+        .notice li::before { content: "\2726"; margin-right: 12px; color: var(--dim); }
+
+        .layout { display: grid; grid-template-columns: 1fr 340px; gap: 40px; align-items: start; }
+        .panel { margin-bottom: 26px; }
+        .panel:last-child { margin-bottom: 0; }
+        .panel h2 { margin: 0 0 24px; display: flex; align-items: center; gap: 16px; }
+        .panel h2 .num { font-family: var(--display); font-style: italic; font-size: 42px; line-height: 1; color: transparent; -webkit-text-stroke: 1px #6a6a6a; background: none; width: auto; height: auto; }
+
+        fieldset { border: 0; margin: 0; padding: 0; }
+        .choices { display: grid; gap: 10px; }
+        .choice input { position: absolute; opacity: 0; pointer-events: none; }
+        .choice label { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 16px 18px; border: 1px solid var(--line); border-radius: 10px; cursor: pointer; transition: border-color 0.2s, background 0.2s; }
+        .choice label:hover { border-color: #777; }
+        .choice label .name { font-size: 14px; font-weight: 400; letter-spacing: 0.04em; }
+        .choice label .sub { font-size: 13px; color: var(--dim); margin-top: 2px; }
+        .choice label .price { font-size: 14px; white-space: nowrap; }
+        .choice input:checked + label { border-color: var(--text); background: var(--text); color: #0b0b0b; }
+        .choice input:checked + label .sub { color: #555555; }
+        .choice input:focus-visible + label { outline: 2px solid var(--text); outline-offset: 3px; }
+
+        .slots { display: flex; flex-wrap: wrap; gap: 10px; }
+        .slot input { position: absolute; opacity: 0; pointer-events: none; }
+        .slot label { display: block; padding: 11px 22px; border: 1px solid var(--line2); border-radius: 999px; cursor: pointer; font-size: 14px; letter-spacing: 0.06em; transition: border-color 0.2s; }
+        .slot label:hover { border-color: #888; }
+        .slot input:checked + label { background: var(--text); color: #0b0b0b; border-color: var(--text); }
+        .slot input:focus-visible + label { outline: 2px solid var(--text); outline-offset: 3px; }
+        .slot input:disabled + label { border-color: var(--line); color: #5a5a5a; text-decoration: line-through; cursor: not-allowed; }
+        .msg { margin: 0 0 16px; font-size: 15px; color: var(--muted); }
+        .msg.warn { color: #d9b070; }
+
+        .summary { position: sticky; top: 96px; background: var(--bg3); border-color: var(--line2); }
+        .summary dl { margin: 0; display: grid; gap: 16px; }
+        .summary dl > div { border-bottom: 1px dashed #444; padding-bottom: 14px; }
+        .summary dt { font-size: 10.5px; font-weight: 400; letter-spacing: 0.22em; text-transform: uppercase; color: var(--dim); }
+        .summary dd { margin: 4px 0 0; font-size: 17px; color: var(--text); }
+        .summary dd.empty { color: #666666; }
+        .summary .btn { width: 100%; margin-top: 26px; }
+        .errors { display: none; background: #2a1614; color: #ffa199; padding: 12px 16px; margin-top: 22px; font-size: 14px; border-radius: 8px; }
+        .errors ul { margin: 6px 0 0; padding-left: 18px; }
+
+        @media (max-width: 820px) {
+            .layout { grid-template-columns: 1fr; }
+            .summary { position: static; }
+            .panel { padding: 26px 20px; }
+            .panel h2 { font-size: 28px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="marquee"><div class="track"><div class="group"><span>Braids</span><span aria-hidden="true">&#10022;</span><span>Twists</span><span aria-hidden="true">&#10022;</span><span>Weaving</span><span aria-hidden="true">&#10022;</span><span>Hair care</span><span aria-hidden="true">&#10022;</span><span>Book online</span><span aria-hidden="true">&#10022;</span><span>Open every day except Thursday &amp; Friday</span><span aria-hidden="true">&#10022;</span></div><div class="group" aria-hidden="true"><span>Braids</span><span aria-hidden="true">&#10022;</span><span>Twists</span><span aria-hidden="true">&#10022;</span><span>Weaving</span><span aria-hidden="true">&#10022;</span><span>Hair care</span><span aria-hidden="true">&#10022;</span><span>Book online</span><span aria-hidden="true">&#10022;</span><span>Open every day except Thursday &amp; Friday</span><span aria-hidden="true">&#10022;</span></div><div class="group" aria-hidden="true"><span>Braids</span><span aria-hidden="true">&#10022;</span><span>Twists</span><span aria-hidden="true">&#10022;</span><span>Weaving</span><span aria-hidden="true">&#10022;</span><span>Hair care</span><span aria-hidden="true">&#10022;</span><span>Book online</span><span aria-hidden="true">&#10022;</span><span>Open every day except Thursday &amp; Friday</span><span aria-hidden="true">&#10022;</span></div><div class="group" aria-hidden="true"><span>Braids</span><span aria-hidden="true">&#10022;</span><span>Twists</span><span aria-hidden="true">&#10022;</span><span>Weaving</span><span aria-hidden="true">&#10022;</span><span>Hair care</span><span aria-hidden="true">&#10022;</span><span>Book online</span><span aria-hidden="true">&#10022;</span><span>Open every day except Thursday &amp; Friday</span><span aria-hidden="true">&#10022;</span></div></div></div>
+    <header class="site">
+        <a href="index.html" class="logo"><span class="mark" aria-hidden="true">KP</span><span class="word">Kori's Place</span></a>
+        <button class="hamburger" id="menu-btn" aria-label="Menu" aria-expanded="false" aria-controls="nav-links">&#9776;</button>
+        <nav>
+            <ul id="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="services.html">Services</a></li>
+                <li><a href="contact.html">Contact</a></li>
+                <li><a href="book.html" class="nav-book" aria-current="page">Book Now</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section class="intro">
+            <h1>Book your <em>appointment</em></h1>
+            <p>Choose your style, pick a day and time, and tell us how to reach you.</p>
+        </section>
+
+        <section class="notice" aria-labelledby="notice-title">
+            <h2 id="notice-title">Good to know</h2>
+            <ul>
+                <li>Please bring your own hair extensions. After booking, send Kori a photo of your hair and a photo of your extensions on WhatsApp.</li>
+                <li>Outcalls and addresses outside Bedford cost more because of travel.</li>
+                <li>Same-day bookings carry an extra charge.</li>
+                <li>A fee applies for last-minute cancellations.</li>
+            </ul>
+        </section>
+
+        <form id="booking-form" class="layout" novalidate>
+            <div>
+                <section class="panel">
+                    <h2><span class="num">1</span> Choose your style or service</h2>
+                    <fieldset>
+                        <legend class="hint" style="margin-bottom:10px">Pick one</legend>
+                        <div class="choices" id="style-choices"></div>
+                    </fieldset>
+                </section>
+
+                <section class="panel">
+                    <h2><span class="num">2</span> Pick a date</h2>
+                    <div class="field">
+                        <label class="lbl" for="date">Appointment date</label>
+                        <input type="date" id="date" name="date">
+                        <p class="hint" id="date-hint"></p>
+                    </div>
+                </section>
+
+                <section class="panel">
+                    <h2><span class="num">3</span> Pick a time</h2>
+                    <p class="msg" id="slots-msg">Choose a date first to see available times.</p>
+                    <div class="slots" id="slots" role="radiogroup" aria-label="Available times"></div>
+                </section>
+
+                <section class="panel">
+                    <h2><span class="num">4</span> Your details</h2>
+                    <div class="field">
+                        <label class="lbl" for="where">Where would you like your appointment?</label>
+                        <select id="where" name="where">
+                            <option value="studio">At Kori's place (Bedford)</option>
+                            <option value="outcall">Outcall: Kori comes to me</option>
+                        </select>
+                        <p class="hint">Outcalls and addresses outside Bedford cost more because of travel. The extra charge is confirmed before your appointment.</p>
+                    </div>
+                    <div class="field" id="address-field" hidden>
+                        <label class="lbl" for="address">Your address and postcode</label>
+                        <input type="text" id="address" name="address" autocomplete="street-address">
+                    </div>
+                    <div class="field">
+                        <label class="lbl" for="name">Full name</label>
+                        <input type="text" id="name" name="name" autocomplete="name">
+                    </div>
+                    <div class="field">
+                        <label class="lbl" for="phone">Phone / WhatsApp number</label>
+                        <input type="tel" id="phone" name="phone" autocomplete="tel" inputmode="tel" placeholder="e.g. 07123 456789">
+                    </div>
+                    <div class="field">
+                        <label class="lbl" for="email">Email <span class="optional">(optional)</span></label>
+                        <input type="email" id="email" name="email" autocomplete="email">
+                    </div>
+                    <div class="field">
+                        <label class="lbl" for="notes">Notes <span class="optional">(optional)</span></label>
+                        <textarea id="notes" name="notes" placeholder="Hair length, size, colour, anything we should know"></textarea>
+                    </div>
+                </section>
+            </div>
+
+            <aside class="panel summary" aria-labelledby="sum-title">
+                <h2 id="sum-title">Your booking</h2>
+                <dl>
+                    <div><dt>Style</dt><dd id="sum-style" class="empty">Not chosen yet</dd></div>
+                    <div><dt>Date</dt><dd id="sum-date" class="empty">Not chosen yet</dd></div>
+                    <div><dt>Time</dt><dd id="sum-time" class="empty">Not chosen yet</dd></div>
+                    <div><dt>Price</dt><dd id="sum-price" class="empty">-</dd></div>
+                </dl>
+                <div class="errors" id="errors" role="alert" tabindex="-1"></div>
+                <button type="submit" class="btn" id="submit-btn">Request this booking</button>
+                <p class="hint" id="submit-hint"></p>
+            </aside>
+        </form>
+    </main>
+
+    <footer>
+        <div class="foot-grid">
+            <div class="foot-brand">
+                <a href="index.html" class="logo"><span class="mark" aria-hidden="true">KP</span><span class="word">Kori's Place</span></a>
+                <p>Hairstyles, booked online. Based in Bedford, UK.</p>
+                <a href="book.html" class="btn">Book an appointment</a>
+            </div>
+            <div class="foot-col">
+                <h3>Explore</h3>
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="services.html">Services</a></li>
+                    <li><a href="book.html">Book an appointment</a></li>
+                </ul>
+            </div>
+            <div class="foot-col">
+                <h3>Company</h3>
+                <ul>
+                    <li><a href="contact.html?topic=about">Get to know us</a></li>
+                    <li><a href="work.html">Work with us</a></li>
+                    <li><a href="contact.html">Contact us</a></li>
+                </ul>
+            </div>
+            <div class="foot-col">
+                <h3>Visit us</h3>
+                <ul>
+                    <li>Bedford, UK</li>
+                    <li>Open Sunday to Wednesday and Saturday</li>
+                    <li>Closed Thursday and Friday</li>
+                    <li><a href="contact.html">Get in touch</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="foot-bottom">
+            <p>&copy; <span id="year"></span> Kori's Place</p>
+            <p>Hairstyles &middot; Hair care &middot; Outcalls</p>
+        </div>
+    </footer>
+
+    <script>
+        /*
+          EDIT THIS BLOCK. Everything marked PLACEHOLDER must be replaced with her real details.
+
+          - whatsapp: digits only, with country code, no + or spaces, and drop the leading 0
+                      (UK example: 07123 456789 becomes "447123456789")
+          - onlinePayment: leave false until Stripe is connected (see submitBooking below)
+          - leadDays: earliest bookable day, counted from today (0 = same day, 1 = from tomorrow)
+          - horizonDays: how far ahead people can book
+          - weeklySlots: start times for each weekday, 0 = Sunday ... 6 = Saturday.
+                         An empty list means closed that day.
+                         Open every day except Thursday and Friday. The TIMES are PLACEHOLDERS.
+          - booked: slots already taken, e.g. { "2026-12-05": ["09:00"] }
+                    This will come from the database once it is connected.
+        */
+        const BOOKING = {
+            whatsapp: "",
+            onlinePayment: false,
+            leadDays: 0,
+            horizonDays: 7,
+            weeklySlots: {
+                0: ["09:00", "12:00", "15:00"],
+                1: ["09:00", "12:00", "15:00"],
+                2: ["09:00", "12:00", "15:00"],
+                3: ["09:00", "12:00", "15:00"],
+                4: [],
+                5: [],
+                6: ["09:00", "12:00", "15:00"]
+            },
+            booked: {}
+        };
+
+        /*
+          Same list as on services.html. If you change styles there, change them here too.
+          Placeholders until her real list arrives. price: number in pounds (e.g. 45), or null.
+        */
+        const STYLES = [
+            { id: "knotless-braids", name: "Knotless Braids", price: null, duration: "" },
+            { id: "box-braids",      name: "Box Braids",      price: null, duration: "" },
+            { id: "cornrows",        name: "Cornrows",        price: null, duration: "" },
+            { id: "ghana-weaving",   name: "Ghana Weaving",   price: null, duration: "" },
+            { id: "twists",          name: "Twists",          price: null, duration: "" },
+            { id: "hair-washing",     name: "Hair Washing & Treatment", price: null, duration: "" },
+            { id: "hair-removal",     name: "Hair Removal",    price: null, duration: "" }
+        ];
+
+        /* ---------- helpers ---------- */
+        const $ = (id) => document.getElementById(id);
+        const form = $('booking-form');
+        const state = { styleId: '', date: '', time: '' };
+
+        function el(tag, props, children) {
+            const node = document.createElement(tag);
+            Object.assign(node, props || {});
+            (children || []).forEach(c => node.append(c));
+            return node;
+        }
+
+        function pad(n) { return String(n).padStart(2, '0'); }
+        function toISO(d) { return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()); }
+        function fromISO(s) { const [y, m, d] = s.split('-').map(Number); return new Date(y, m - 1, d); }
+        function addDays(d, n) { const x = new Date(d); x.setDate(x.getDate() + n); return x; }
+        function formatPrice(p) { return p == null ? 'Price confirmed on booking' : '£' + Number(p).toLocaleString('en-GB', { minimumFractionDigits: p % 1 ? 2 : 0, maximumFractionDigits: 2 }); }
+        function formatTime(t) {
+            const [h, m] = t.split(':').map(Number);
+            return ((h % 12) || 12) + ':' + pad(m) + ' ' + (h < 12 ? 'AM' : 'PM');
+        }
+        function formatDate(s) {
+            return fromISO(s).toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+        }
+        function getStyle() { return STYLES.find(s => s.id === state.styleId); }
+
+        /* ---------- step 1: styles ---------- */
+        const preselect = new URLSearchParams(location.search).get('style');
+        if (STYLES.some(s => s.id === preselect)) state.styleId = preselect;
+
+        $('style-choices').replaceChildren(...STYLES.map(s => {
+            const input = el('input', { type: 'radio', name: 'style', id: 'style-' + s.id, value: s.id, checked: s.id === state.styleId });
+            const sub = s.duration ? el('div', { className: 'sub', textContent: s.duration }) : '';
+            const label = el('label', { htmlFor: input.id }, [
+                el('div', {}, [el('div', { className: 'name', textContent: s.name }), sub]),
+                el('span', { className: 'price', textContent: s.price == null ? '' : formatPrice(s.price) })
+            ]);
+            input.addEventListener('change', () => { state.styleId = s.id; renderSummary(); });
+            return el('div', { className: 'choice' }, [input, label]);
+        }));
+
+        /* ---------- step 2: date ---------- */
+        const today = new Date(); today.setHours(0, 0, 0, 0);
+        const minDate = addDays(today, BOOKING.leadDays);
+        const maxDate = addDays(today, BOOKING.horizonDays);
+        const dateInput = $('date');
+        dateInput.min = toISO(minDate);
+        dateInput.max = toISO(maxDate);
+        $('date-hint').textContent = 'Bookings open from ' + formatDate(toISO(minDate)) + ' up to ' + BOOKING.horizonDays + ' days ahead.';
+
+        function slotsFor(iso) {
+            const day = fromISO(iso).getDay();
+            const base = BOOKING.weeklySlots[day] || [];
+            const taken = BOOKING.booked[iso] || [];
+            const now = new Date();
+            const nowMins = now.getHours() * 60 + now.getMinutes();
+            const upcoming = base.filter(t => {
+                if (iso !== toISO(now)) return true;
+                const [h, m] = t.split(':').map(Number);
+                return h * 60 + m > nowMins; // today: only times still to come
+            });
+            return upcoming.map(t => ({ time: t, taken: taken.includes(t) }));
+        }
+
+        function dateProblem(iso) {
+            if (!iso) return 'Please pick a date.';
+            const d = fromISO(iso);
+            if (isNaN(d)) return 'That date is not valid.';
+            if (d < minDate) return 'Please choose ' + formatDate(toISO(minDate)) + ' or later.';
+            if (d > maxDate) return 'Bookings are only open up to ' + BOOKING.horizonDays + ' days ahead.';
+            if (!(BOOKING.weeklySlots[d.getDay()] || []).length) return 'We are closed that day. Please pick another date.';
+            return '';
+        }
+
+        dateInput.addEventListener('change', () => {
+            state.date = dateInput.value;
+            state.time = '';
+            renderSlots();
+            renderSummary();
+        });
+
+        /* ---------- step 3: time slots ---------- */
+        function renderSlots() {
+            const wrap = $('slots');
+            const msg = $('slots-msg');
+            wrap.replaceChildren();
+            msg.className = 'msg';
+            const problem = state.date ? dateProblem(state.date) : '';
+            if (!state.date) { msg.textContent = 'Choose a date first to see available times.'; return; }
+            if (problem) { msg.textContent = problem; msg.classList.add('warn'); return; }
+            const slots = slotsFor(state.date);
+            if (!slots.length) { msg.textContent = 'There are no more times left today. Please pick another date.'; msg.classList.add('warn'); return; }
+            if (slots.every(s => s.taken)) { msg.textContent = 'This day is fully booked. Please pick another date.'; msg.classList.add('warn'); return; }
+            msg.textContent = 'Available times on ' + formatDate(state.date) + ':' + (state.date === toISO(today) ? ' Same-day bookings carry an extra charge, confirmed when we reply.' : '');
+            wrap.replaceChildren(...slots.map(s => {
+                const id = 'slot-' + s.time.replace(':', '');
+                const input = el('input', { type: 'radio', name: 'time', id, value: s.time, disabled: s.taken });
+                input.addEventListener('change', () => { state.time = s.time; renderSummary(); });
+                return el('div', { className: 'slot' }, [input, el('label', { htmlFor: id, textContent: formatTime(s.time) + (s.taken ? ' (taken)' : '') })]);
+            }));
+        }
+
+        /* ---------- summary ---------- */
+        function setSum(id, text, emptyText) {
+            const node = $(id);
+            node.textContent = text || emptyText;
+            node.classList.toggle('empty', !text);
+        }
+        function renderSummary() {
+            const s = getStyle();
+            setSum('sum-style', s && s.name, 'Not chosen yet');
+            setSum('sum-date', state.date && !dateProblem(state.date) ? formatDate(state.date) : '', 'Not chosen yet');
+            setSum('sum-time', state.time ? formatTime(state.time) : '', 'Not chosen yet');
+            setSum('sum-price', s ? formatPrice(s.price) : '', '-');
+        }
+
+        /* ---------- submit ---------- */
+        $('submit-hint').textContent = BOOKING.onlinePayment
+            ? 'You will be taken to a secure page to pay.'
+            : 'Your request is sent to Kori on WhatsApp. She will confirm your slot and share payment details. Online payment is coming soon.';
+
+        function validate() {
+            const errs = [];
+            if (!state.styleId) errs.push('Choose a style.');
+            const dp = dateProblem(state.date);
+            if (dp) errs.push(dp);
+            else if (!state.time) errs.push('Pick a time.');
+            if (form.where.value === 'outcall' && !form.address.value.trim()) errs.push('Enter your address and postcode for the outcall.');
+            if (!form.name.value.trim()) errs.push('Enter your full name.');
+            const digits = form.phone.value.replace(/[^\d]/g, '');
+            if (digits.length < 10 || digits.length > 15) errs.push('Enter a valid phone number.');
+            const email = form.email.value.trim();
+            if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) errs.push('That email address does not look right.');
+            return errs;
+        }
+
+        function showErrors(errs) {
+            const box = $('errors');
+            if (!errs.length) { box.style.display = 'none'; box.replaceChildren(); return; }
+            box.replaceChildren('Please fix the following:', el('ul', {}, errs.map(e => el('li', { textContent: e }))));
+            box.style.display = 'block';
+            box.focus();
+        }
+
+        /*
+          LATER: when the backend and Stripe are connected, replace the body of this
+          function with:
+            1. save the booking to the database (status "pending")
+            2. start the Stripe payment
+            3. mark it paid only after Stripe confirms on the server
+          Until then it sends the request to her WhatsApp.
+        */
+        function submitBooking(b) {
+            if (!BOOKING.whatsapp) {
+                return "Booking isn't switched on yet. Please check back soon.";
+            }
+            const text = [
+                "Hi Kori's Place, I'd like to book an appointment.",
+                '',
+                'Style: ' + b.style.name,
+                'Date: ' + formatDate(b.date),
+                'Time: ' + formatTime(b.time),
+                'Location: ' + (b.where === 'outcall' ? 'Outcall at ' + b.address : "At Kori's place (Bedford)"),
+                'Name: ' + b.name,
+                'Phone: ' + b.phone,
+                b.email ? 'Email: ' + b.email : '',
+                b.notes ? 'Notes: ' + b.notes : '',
+                "I'll send a photo of my hair and of my extensions."
+            ].filter((line, i) => line !== '' || i === 1).join('\n');
+            window.open('https://wa.me/' + BOOKING.whatsapp + '?text=' + encodeURIComponent(text), '_blank', 'noopener');
+            return '';
+        }
+
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const errs = validate();
+            if (errs.length) { showErrors(errs); return; }
+            const problem = submitBooking({
+                style: getStyle(), date: state.date, time: state.time,
+                name: form.name.value.trim(), phone: form.phone.value.trim(),
+                email: form.email.value.trim(), notes: form.notes.value.trim(),
+                where: form.where.value, address: form.address.value.trim()
+            });
+            showErrors(problem ? [problem] : []);
+        });
+
+        /* ---------- menu + init ---------- */
+        const menuBtn = $('menu-btn');
+        const navLinks = $('nav-links');
+        menuBtn.addEventListener('click', () => {
+            const open = navLinks.classList.toggle('show');
+            menuBtn.setAttribute('aria-expanded', String(open));
+        });
+
+        form.where.addEventListener('change', () => {
+            $('address-field').hidden = form.where.value !== 'outcall';
+        });
+
+        $('year').textContent = new Date().getFullYear();
+        renderSlots();
+        renderSummary();
+
+        /* Gentle fade-in as sections scroll into view */
+        (function () {
+            if (!('IntersectionObserver' in window) || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+            const io = new IntersectionObserver((entries) => {
+                entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+            }, { threshold: 0.08 });
+            document.querySelectorAll('.hero-text, .hero-art, .step, .grid, .good, .notice, .intro, .panel:not(.summary), .closing .wrap, .block > .wrap > .sub, .see-all').forEach(el => {
+                el.classList.add('reveal');
+                io.observe(el);
+            });
+        })();
+    </script>
+</body>
+</html>
