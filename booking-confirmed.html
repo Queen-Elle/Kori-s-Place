@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Booking | Kori's Place</title>
+    <link rel="icon" type="image/png" sizes="48x48" href="images/favicon-48.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="images/favicon.png">
+    <link rel="apple-touch-icon" href="images/apple-touch-icon.png">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            color-scheme: dark;
+            --bg: #0b0b0b;
+            --bg2: #131313;
+            --bg3: #1a1a1a;
+            --line: #2a2a2a;
+            --line2: #3f3f3f;
+            --text: #e4e4e4;
+            --muted: #9b9b9b;
+            --dim: #858585;
+            --display: "Cormorant Garamond", "Cormorant", "Playfair Display", Georgia, "Times New Roman", serif;
+            --sans: "Jost", "Helvetica Neue", Helvetica, Arial, sans-serif;
+            --gut: clamp(20px, 5vw, 64px);
+        }
+        * { box-sizing: border-box; }
+        body { margin: 0; background: var(--bg); color: var(--text); font-family: var(--sans); font-weight: 300; font-size: 16px; line-height: 1.75; letter-spacing: 0.01em; -webkit-font-smoothing: antialiased; }
+        h1, h2, h3 { font-family: var(--display); font-weight: 400; line-height: 1.02; letter-spacing: 0; margin: 0; color: var(--text); }
+        em { font-style: italic; font-weight: 400; color: var(--muted); }
+        a { color: inherit; }
+        ::placeholder { color: #6c6c6c; opacity: 1; }
+        :focus-visible { outline: 2px solid var(--text); outline-offset: 3px; }
+
+        /* Ticker */
+        .marquee { background: #000; color: var(--muted); overflow: hidden; white-space: nowrap; font-size: 11px; font-weight: 400; letter-spacing: 0.24em; text-transform: uppercase; padding: 11px 0; border-bottom: 1px solid var(--line); }
+        .marquee .track { display: inline-flex; animation: scroll 50s linear infinite; }
+        .marquee .group { display: inline-flex; }
+        .marquee .group span { padding: 0 22px; }
+        @keyframes scroll { to { transform: translateX(-50%); } }
+
+        /* Header */
+        header.site {
+            position: sticky; top: 0; z-index: 50;
+            background: rgba(11, 11, 11, 0.94); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+            border-bottom: 1px solid var(--line);
+            display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap;
+            padding: 14px var(--gut);
+        }
+        .logo { display: inline-flex; align-items: center; gap: 12px; text-decoration: none; color: var(--text); }
+        .logo .mark { width: 46px; height: 46px; border-radius: 50%; display: block; object-fit: cover; flex: none; }
+        .logo .word { font-family: var(--display); font-style: italic; font-weight: 500; font-size: 30px; line-height: 1; }
+        nav ul { list-style: none; margin: 0; padding: 0; display: flex; align-items: center; gap: 36px; }
+        nav a { font-size: 11.5px; font-weight: 400; letter-spacing: 0.2em; text-transform: uppercase; text-decoration: none; color: var(--muted); padding-bottom: 4px; background: linear-gradient(var(--text), var(--text)) left bottom / 0 1px no-repeat; transition: background-size 0.3s, color 0.3s; }
+        nav a:hover, nav a[aria-current="page"] { color: var(--text); background-size: 100% 1px; }
+        nav a.nav-book { background: transparent; color: var(--text); padding: 12px 24px; border: 1px solid var(--text); border-radius: 999px; transition: background 0.25s, color 0.25s; }
+        nav a.nav-book::after { content: " \2192"; }
+        nav a.nav-book:hover { background: var(--text); color: #0b0b0b; }
+        .hamburger { display: none; background: none; border: 1px solid var(--line2); border-radius: 999px; width: 44px; height: 44px; font-size: 20px; line-height: 1; cursor: pointer; color: var(--text); }
+
+        /* Buttons */
+        .btn { display: inline-flex; align-items: center; justify-content: center; font: inherit; font-size: 11.5px; font-weight: 400; letter-spacing: 0.2em; text-transform: uppercase; text-decoration: none; padding: 17px 34px; border: 1px solid var(--text); border-radius: 999px; background: var(--text); color: #0b0b0b; cursor: pointer; transition: background 0.25s, color 0.25s; }
+        .btn::after { content: "\2192"; margin-left: 10px; transition: transform 0.25s; }
+        .btn:hover { background: transparent; color: var(--text); }
+        .btn:hover::after { transform: translateX(5px); }
+        .btn.ghost { background: transparent; color: var(--text); }
+        .btn.ghost:hover { background: var(--text); color: #0b0b0b; }
+
+        /* Cards */
+        .card { display: flex; flex-direction: column; background: var(--bg2); border: 1px solid var(--line); transition: transform 0.35s, border-color 0.35s; }
+        .card:hover { transform: translateY(-5px); border-color: #6a6a6a; }
+        .card .photo { aspect-ratio: 3 / 4; background: #1b1b1b; color: var(--dim); display: flex; align-items: center; justify-content: center; font-size: 12px; letter-spacing: 0.16em; text-transform: uppercase; overflow: hidden; border-bottom: 1px solid var(--line); }
+        .card .photo img { width: 100%; height: 100%; object-fit: cover; object-position: center top; display: block; transition: transform 0.8s; }
+        .card:hover .photo img { transform: scale(1.04); }
+        .card .body { padding: 20px 20px 22px; display: flex; flex-direction: column; align-items: flex-start; gap: 10px; flex: 1; }
+        .card h2, .card h3 { font-style: italic; font-weight: 500; font-size: 28px; line-height: 1.05; }
+        .card .book { align-self: flex-start; display: inline-flex; align-items: center; font-size: 10.5px; font-weight: 400; letter-spacing: 0.18em; text-transform: uppercase; text-decoration: none; color: var(--text); border: 1px solid var(--line2); border-radius: 999px; padding: 10px 18px; transition: background 0.25s, color 0.25s, border-color 0.25s; }
+        .card .book::after { content: "\2192"; margin-left: 8px; transition: transform 0.25s; }
+        .card .book:hover { background: var(--text); color: #0b0b0b; border-color: var(--text); }
+        .card .book:hover::after { transform: translateX(4px); }
+        .kicker { margin: 0; font-size: 10.5px; font-weight: 400; letter-spacing: 0.24em; text-transform: uppercase; color: var(--dim); }
+
+        /* Footer */
+        footer { background: #000; color: var(--text); padding: clamp(56px, 8vw, 96px) var(--gut) 30px; border-top: 1px solid var(--line); }
+        footer .foot-grid { display: grid; grid-template-columns: 1.5fr 1fr 1fr 1.2fr; gap: 48px; max-width: 1240px; margin: 0 auto; text-align: left; }
+        footer .logo { margin-bottom: 20px; }
+        footer .foot-brand p { margin: 0 0 24px; color: var(--muted); font-size: 15px; max-width: 280px; }
+        footer h3 { font-family: var(--sans); font-size: 10.5px; font-weight: 400; letter-spacing: 0.24em; text-transform: uppercase; color: var(--dim); margin: 0 0 20px; }
+        footer ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 13px; }
+        footer li { font-size: 14px; color: var(--muted); }
+        footer a { color: var(--text); text-decoration: none; background: linear-gradient(var(--text), var(--text)) left bottom / 0 1px no-repeat; padding-bottom: 2px; transition: background-size 0.3s; }
+        footer a.btn, footer a.logo { background-image: none; padding-bottom: 0; }
+        footer a.btn { padding: 17px 34px; }
+        footer a:hover { background-size: 100% 1px; }
+        footer .foot-bottom { max-width: 1240px; margin: clamp(44px, 6vw, 72px) auto 0; padding-top: 24px; border-top: 1px solid var(--line); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 10px; }
+        footer .foot-bottom p { margin: 0; font-size: 10.5px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--dim); }
+
+        /* Gentle reveal */
+        .reveal { opacity: 0; transform: translateY(24px); transition: opacity 1s ease, transform 1s ease; }
+        .reveal.in { opacity: 1; transform: none; }
+
+        @media (max-width: 820px) {
+            .hamburger { display: block; }
+            nav { width: 100%; }
+            nav ul { display: none; flex-direction: column; align-items: flex-start; gap: 20px; padding: 22px 0 8px; }
+            nav ul.show { display: flex; }
+            .logo .word { font-size: 25px; }
+            .card h2, .card h3 { font-size: 21px; }
+            .card .body { padding: 14px 12px 16px; }
+            .card .book { font-size: 10px; padding: 8px 13px; }
+            footer .foot-grid { grid-template-columns: 1fr 1fr; gap: 40px 24px; }
+            footer .foot-brand { grid-column: 1 / -1; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .marquee .track, .badge svg { animation: none !important; }
+            .reveal { opacity: 1; transform: none; transition: none; }
+            .card, .card:hover { transition: none; }
+        }
+
+        .field { margin-bottom: 20px; }
+        label.lbl, form label.lbl { display: block; font-size: 10.5px; font-weight: 400; letter-spacing: 0.22em; text-transform: uppercase; color: var(--muted); margin: 0 0 9px; }
+        .optional { text-transform: none; letter-spacing: 0; color: var(--dim); }
+        input[type="text"], input[type="tel"], input[type="email"], input[type="date"], select, textarea {
+            width: 100%; font: inherit; font-size: 16px; padding: 14px 16px; border: 1px solid var(--line2); border-radius: 8px; background: var(--bg); color: var(--text);
+        }
+        input:focus, select:focus, textarea:focus { outline: none; border-color: var(--text); box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.08); }
+        textarea { min-height: 104px; resize: vertical; }
+        .hint { font-size: 13px; color: var(--dim); margin: 9px 0 0; line-height: 1.55; }
+        .panel { background: var(--bg2); border: 1px solid var(--line); padding: 32px; }
+        .panel h2 { font-size: 34px; font-weight: 400; }
+
+        main { max-width: 1120px; margin: 0 auto; padding: clamp(44px, 6vw, 84px) var(--gut) 80px; }
+        .intro { margin-bottom: 44px; }
+        .intro h1 { font-size: clamp(46px, 8vw, 116px); font-weight: 300; line-height: 0.96; margin-bottom: 20px; }
+        .intro p { margin: 0; max-width: 540px; font-size: 18px; color: var(--muted); }
+
+        .layout { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: start; }
+        .panel h2 { margin: 0 0 24px; }
+
+        .quick { display: grid; gap: 12px; margin-bottom: 32px; }
+        .quick .btn:not(.whatsapp) { background: transparent; color: var(--text); }
+        .quick .btn:not(.whatsapp):hover { background: var(--text); color: #0b0b0b; }
+
+        .details { list-style: none; margin: 0; padding: 0; display: grid; gap: 24px; }
+        .details li { font-size: 16px; line-height: 1.55; color: var(--text); }
+        .details .label { display: block; font-size: 10.5px; font-weight: 400; letter-spacing: 0.22em; text-transform: uppercase; color: var(--dim); margin-bottom: 5px; }
+        .details a { font-weight: 400; color: var(--text); }
+        .hours { margin: 0; padding: 0; list-style: none; }
+        .hours li { display: flex; justify-content: space-between; gap: 12px; margin-bottom: 4px; color: var(--muted); }
+
+        .btn.block { display: flex; width: 100%; }
+        .error { color: #ffa199; font-size: 14px; margin: 0 0 14px; display: none; }
+
+        @media (max-width: 820px) {
+            .layout { grid-template-columns: 1fr; }
+            .panel { padding: 26px 20px; }
+        }
+
+        .sum { margin: 0 0 28px; display: grid; gap: 14px; }
+        .sum > div { border-bottom: 1px dashed #444; padding-bottom: 12px; }
+        .sum dt { font-size: 10.5px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--dim); }
+        .sum dd { margin: 4px 0 0; font-size: 17px; }
+        .actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 22px; }
+    </style>
+</head>
+<body>
+    <div class="marquee"><div class="track"><div class="group"><span>Braids</span><span aria-hidden="true">&#10022;</span><span>Twists</span><span aria-hidden="true">&#10022;</span><span>Weaving</span><span aria-hidden="true">&#10022;</span><span>Hair care</span><span aria-hidden="true">&#10022;</span><span>Book online</span><span aria-hidden="true">&#10022;</span><span>Open every day except Thursday &amp; Friday</span><span aria-hidden="true">&#10022;</span></div><div class="group" aria-hidden="true"><span>Braids</span><span aria-hidden="true">&#10022;</span><span>Twists</span><span aria-hidden="true">&#10022;</span><span>Weaving</span><span aria-hidden="true">&#10022;</span><span>Hair care</span><span aria-hidden="true">&#10022;</span><span>Book online</span><span aria-hidden="true">&#10022;</span><span>Open every day except Thursday &amp; Friday</span><span aria-hidden="true">&#10022;</span></div><div class="group" aria-hidden="true"><span>Braids</span><span aria-hidden="true">&#10022;</span><span>Twists</span><span aria-hidden="true">&#10022;</span><span>Weaving</span><span aria-hidden="true">&#10022;</span><span>Hair care</span><span aria-hidden="true">&#10022;</span><span>Book online</span><span aria-hidden="true">&#10022;</span><span>Open every day except Thursday &amp; Friday</span><span aria-hidden="true">&#10022;</span></div><div class="group" aria-hidden="true"><span>Braids</span><span aria-hidden="true">&#10022;</span><span>Twists</span><span aria-hidden="true">&#10022;</span><span>Weaving</span><span aria-hidden="true">&#10022;</span><span>Hair care</span><span aria-hidden="true">&#10022;</span><span>Book online</span><span aria-hidden="true">&#10022;</span><span>Open every day except Thursday &amp; Friday</span><span aria-hidden="true">&#10022;</span></div></div></div>
+    <header class="site">
+        <a href="index.html" class="logo"><img class="mark" src="images/logo-mark.png" alt="" width="46" height="46"><span class="word">Kori's Place</span></a>
+        <button class="hamburger" id="menu-btn" aria-label="Menu" aria-expanded="false" aria-controls="nav-links">&#9776;</button>
+        <nav>
+            <ul id="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="services.html">Services</a></li>
+                <li><a href="work.html">Work with us</a></li>
+                <li><a href="contact.html">Contact</a></li>
+                <li><a href="book.html" class="nav-book">Book Now</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section class="intro">
+            <h1 id="title">Checking your <em>booking</em></h1>
+            <p id="lead">One moment while we confirm your payment.</p>
+        </section>
+        <section class="panel" id="card" hidden style="max-width:620px">
+            <dl class="sum" id="sum"></dl>
+            <p class="hint" id="next"></p>
+            <div class="actions" id="actions"></div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="foot-grid">
+            <div class="foot-brand">
+                <a href="index.html" class="logo"><img class="mark" src="images/logo-mark.png" alt="" width="46" height="46"><span class="word">Kori's Place</span></a>
+                <p>Hairstyles, booked online. Based in Bedford, UK.</p>
+                <a href="book.html" class="btn">Book an appointment</a>
+            </div>
+            <div class="foot-col">
+                <h3>Explore</h3>
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="services.html">Services</a></li>
+                    <li><a href="book.html">Book an appointment</a></li>
+                </ul>
+            </div>
+            <div class="foot-col">
+                <h3>Company</h3>
+                <ul>
+                    <li><a href="contact.html?topic=about">Get to know us</a></li>
+                    <li><a href="work.html">Work with us</a></li>
+                    <li><a href="contact.html">Contact us</a></li>
+                </ul>
+            </div>
+            <div class="foot-col">
+                <h3>Visit us</h3>
+                <ul>
+                    <li>Bedford, UK</li>
+                    <li>Open Sunday to Wednesday and Saturday</li>
+                    <li>Closed Thursday and Friday</li>
+                    <li><a href="contact.html">Get in touch</a></li>
+                    <li><a href="https://instagram.com/koris.place" target="_blank" rel="noopener">Instagram</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="foot-bottom">
+            <p>&copy; <span id="year"></span> Kori's Place</p>
+            <p>Hairstyles &middot; Hair care &middot; Outcalls</p>
+        </div>
+    </footer>
+
+    <script>
+        /* EDIT THIS: the address of the booking server (the same one as apiUrl in book.html). */
+        const API_URL = "";
+
+        const $ = (id) => document.getElementById(id);
+        const params = new URLSearchParams(location.search);
+
+        function row(label, value) {
+            const d = document.createElement('div');
+            const dt = document.createElement('dt'); dt.textContent = label;
+            const dd = document.createElement('dd'); dd.textContent = value;
+            d.append(dt, dd);
+            return d;
+        }
+        function say(title, lead) { $('title').innerHTML = title; $('lead').textContent = lead; }
+        function button(text, href, ghost) {
+            const a = document.createElement('a');
+            a.className = 'btn' + (ghost ? ' ghost' : ''); a.href = href; a.textContent = text;
+            return a;
+        }
+
+        async function load() {
+            const res = await fetch(API_URL.replace(/\/$/, '') + '/api/bookings/' + encodeURIComponent(params.get('b')) + '?token=' + encodeURIComponent(params.get('t')));
+            if (!res.ok) throw new Error('not found');
+            return res.json();
+        }
+
+        function show(b) {
+            const when = new Date(b.date + 'T12:00:00').toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+            const [h, m] = b.time.split(':').map(Number);
+            const time = ((h % 12) || 12) + ':' + String(m).padStart(2, '0') + ' ' + (h < 12 ? 'AM' : 'PM');
+            $('sum').replaceChildren(
+                row('Style', b.style + (b.option ? ' - ' + b.option : '')),
+                ...(b.addons && b.addons.length ? [row('Add-ons', b.addons.join(', '))] : []),
+                row('Date', when), row('Time', time),
+                row('Where', b.location === 'outcall' ? 'Kori comes to you' : "Kori's place, Bedford"),
+                row('Deposit paid', '£' + (b.depositPence / 100).toFixed(b.depositPence % 100 ? 2 : 0))
+            );
+            $('next').textContent = "The rest is paid at your appointment. Please send Kori a photo of your hair and of your extensions before you come.";
+            $('actions').replaceChildren(button('Contact Kori', 'contact.html'), button('Back to home', 'index.html', true));
+            $('card').hidden = false;
+        }
+
+        (async function start() {
+            if (!API_URL || !params.get('b') || !params.get('t')) {
+                say('Booking <em>not found</em>', 'This link is not complete. If you paid a deposit, please contact us.');
+                $('actions').replaceChildren(button('Contact us', 'contact.html'));
+                $('card').hidden = false;
+                return;
+            }
+            // Stripe tells our server a moment after the payment, so check a few times.
+            for (let i = 0; i < 20; i++) {
+                try {
+                    const b = await load();
+                    if (b.status === 'confirmed') { say("You're <em>booked</em>", 'Your deposit is paid and your time is held. See you soon.'); show(b); return; }
+                    if (b.status === 'expired' || b.status === 'cancelled') {
+                        say('Not <em>confirmed</em>', 'This booking was not completed. If you were charged, you will be refunded. You can book again.');
+                        $('actions').replaceChildren(button('Book again', 'book.html'));
+                        $('card').hidden = false; return;
+                    }
+                } catch (e) { break; }
+                await new Promise(r => setTimeout(r, 3000));
+            }
+            say('Still <em>checking</em>', "We have not had confirmation yet. If you paid, please contact us and we will sort it out.");
+            $('actions').replaceChildren(button('Contact us', 'contact.html'));
+            $('card').hidden = false;
+        })();
+
+        const menuBtn = $('menu-btn');
+        menuBtn.addEventListener('click', () => {
+            const open = $('nav-links').classList.toggle('show');
+            menuBtn.setAttribute('aria-expanded', String(open));
+        });
+        $('year').textContent = new Date().getFullYear();
+    </script>
+</body>
+</html>

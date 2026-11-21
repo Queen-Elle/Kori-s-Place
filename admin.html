@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bookings | Kori's Place</title>
+    <link rel="icon" type="image/png" sizes="48x48" href="images/favicon-48.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="images/favicon.png">
+    <link rel="apple-touch-icon" href="images/apple-touch-icon.png">
+    <meta name="robots" content="noindex, nofollow">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            color-scheme: dark;
+            --bg: #0b0b0b;
+            --bg2: #131313;
+            --bg3: #1a1a1a;
+            --line: #2a2a2a;
+            --line2: #3f3f3f;
+            --text: #e4e4e4;
+            --muted: #9b9b9b;
+            --dim: #858585;
+            --display: "Cormorant Garamond", "Cormorant", "Playfair Display", Georgia, "Times New Roman", serif;
+            --sans: "Jost", "Helvetica Neue", Helvetica, Arial, sans-serif;
+            --gut: clamp(20px, 5vw, 64px);
+        }
+        * { box-sizing: border-box; }
+        body { margin: 0; background: var(--bg); color: var(--text); font-family: var(--sans); font-weight: 300; font-size: 16px; line-height: 1.75; letter-spacing: 0.01em; -webkit-font-smoothing: antialiased; }
+        h1, h2, h3 { font-family: var(--display); font-weight: 400; line-height: 1.02; letter-spacing: 0; margin: 0; color: var(--text); }
+        em { font-style: italic; font-weight: 400; color: var(--muted); }
+        a { color: inherit; }
+        ::placeholder { color: #6c6c6c; opacity: 1; }
+        :focus-visible { outline: 2px solid var(--text); outline-offset: 3px; }
+
+        /* Ticker */
+        .marquee { background: #000; color: var(--muted); overflow: hidden; white-space: nowrap; font-size: 11px; font-weight: 400; letter-spacing: 0.24em; text-transform: uppercase; padding: 11px 0; border-bottom: 1px solid var(--line); }
+        .marquee .track { display: inline-flex; animation: scroll 50s linear infinite; }
+        .marquee .group { display: inline-flex; }
+        .marquee .group span { padding: 0 22px; }
+        @keyframes scroll { to { transform: translateX(-50%); } }
+
+        /* Header */
+        header.site {
+            position: sticky; top: 0; z-index: 50;
+            background: rgba(11, 11, 11, 0.94); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+            border-bottom: 1px solid var(--line);
+            display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap;
+            padding: 14px var(--gut);
+        }
+        .logo { display: inline-flex; align-items: center; gap: 12px; text-decoration: none; color: var(--text); }
+        .logo .mark { width: 46px; height: 46px; border-radius: 50%; display: block; object-fit: cover; flex: none; }
+        .logo .word { font-family: var(--display); font-style: italic; font-weight: 500; font-size: 30px; line-height: 1; }
+        nav ul { list-style: none; margin: 0; padding: 0; display: flex; align-items: center; gap: 36px; }
+        nav a { font-size: 11.5px; font-weight: 400; letter-spacing: 0.2em; text-transform: uppercase; text-decoration: none; color: var(--muted); padding-bottom: 4px; background: linear-gradient(var(--text), var(--text)) left bottom / 0 1px no-repeat; transition: background-size 0.3s, color 0.3s; }
+        nav a:hover, nav a[aria-current="page"] { color: var(--text); background-size: 100% 1px; }
+        nav a.nav-book { background: transparent; color: var(--text); padding: 12px 24px; border: 1px solid var(--text); border-radius: 999px; transition: background 0.25s, color 0.25s; }
+        nav a.nav-book::after { content: " \2192"; }
+        nav a.nav-book:hover { background: var(--text); color: #0b0b0b; }
+        .hamburger { display: none; background: none; border: 1px solid var(--line2); border-radius: 999px; width: 44px; height: 44px; font-size: 20px; line-height: 1; cursor: pointer; color: var(--text); }
+
+        /* Buttons */
+        .btn { display: inline-flex; align-items: center; justify-content: center; font: inherit; font-size: 11.5px; font-weight: 400; letter-spacing: 0.2em; text-transform: uppercase; text-decoration: none; padding: 17px 34px; border: 1px solid var(--text); border-radius: 999px; background: var(--text); color: #0b0b0b; cursor: pointer; transition: background 0.25s, color 0.25s; }
+        .btn::after { content: "\2192"; margin-left: 10px; transition: transform 0.25s; }
+        .btn:hover { background: transparent; color: var(--text); }
+        .btn:hover::after { transform: translateX(5px); }
+        .btn.ghost { background: transparent; color: var(--text); }
+        .btn.ghost:hover { background: var(--text); color: #0b0b0b; }
+
+        /* Cards */
+        .card { display: flex; flex-direction: column; background: var(--bg2); border: 1px solid var(--line); transition: transform 0.35s, border-color 0.35s; }
+        .card:hover { transform: translateY(-5px); border-color: #6a6a6a; }
+        .card .photo { aspect-ratio: 3 / 4; background: #1b1b1b; color: var(--dim); display: flex; align-items: center; justify-content: center; font-size: 12px; letter-spacing: 0.16em; text-transform: uppercase; overflow: hidden; border-bottom: 1px solid var(--line); }
+        .card .photo img { width: 100%; height: 100%; object-fit: cover; object-position: center top; display: block; transition: transform 0.8s; }
+        .card:hover .photo img { transform: scale(1.04); }
+        .card .body { padding: 20px 20px 22px; display: flex; flex-direction: column; align-items: flex-start; gap: 10px; flex: 1; }
+        .card h2, .card h3 { font-style: italic; font-weight: 500; font-size: 28px; line-height: 1.05; }
+        .card .book { align-self: flex-start; display: inline-flex; align-items: center; font-size: 10.5px; font-weight: 400; letter-spacing: 0.18em; text-transform: uppercase; text-decoration: none; color: var(--text); border: 1px solid var(--line2); border-radius: 999px; padding: 10px 18px; transition: background 0.25s, color 0.25s, border-color 0.25s; }
+        .card .book::after { content: "\2192"; margin-left: 8px; transition: transform 0.25s; }
+        .card .book:hover { background: var(--text); color: #0b0b0b; border-color: var(--text); }
+        .card .book:hover::after { transform: translateX(4px); }
+        .kicker { margin: 0; font-size: 10.5px; font-weight: 400; letter-spacing: 0.24em; text-transform: uppercase; color: var(--dim); }
+
+        /* Footer */
+        footer { background: #000; color: var(--text); padding: clamp(56px, 8vw, 96px) var(--gut) 30px; border-top: 1px solid var(--line); }
+        footer .foot-grid { display: grid; grid-template-columns: 1.5fr 1fr 1fr 1.2fr; gap: 48px; max-width: 1240px; margin: 0 auto; text-align: left; }
+        footer .logo { margin-bottom: 20px; }
+        footer .foot-brand p { margin: 0 0 24px; color: var(--muted); font-size: 15px; max-width: 280px; }
+        footer h3 { font-family: var(--sans); font-size: 10.5px; font-weight: 400; letter-spacing: 0.24em; text-transform: uppercase; color: var(--dim); margin: 0 0 20px; }
+        footer ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 13px; }
+        footer li { font-size: 14px; color: var(--muted); }
+        footer a { color: var(--text); text-decoration: none; background: linear-gradient(var(--text), var(--text)) left bottom / 0 1px no-repeat; padding-bottom: 2px; transition: background-size 0.3s; }
+        footer a.btn, footer a.logo { background-image: none; padding-bottom: 0; }
+        footer a.btn { padding: 17px 34px; }
+        footer a:hover { background-size: 100% 1px; }
+        footer .foot-bottom { max-width: 1240px; margin: clamp(44px, 6vw, 72px) auto 0; padding-top: 24px; border-top: 1px solid var(--line); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 10px; }
+        footer .foot-bottom p { margin: 0; font-size: 10.5px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--dim); }
+
+        /* Gentle reveal */
+        .reveal { opacity: 0; transform: translateY(24px); transition: opacity 1s ease, transform 1s ease; }
+        .reveal.in { opacity: 1; transform: none; }
+
+        @media (max-width: 820px) {
+            .hamburger { display: block; }
+            nav { width: 100%; }
+            nav ul { display: none; flex-direction: column; align-items: flex-start; gap: 20px; padding: 22px 0 8px; }
+            nav ul.show { display: flex; }
+            .logo .word { font-size: 25px; }
+            .card h2, .card h3 { font-size: 21px; }
+            .card .body { padding: 14px 12px 16px; }
+            .card .book { font-size: 10px; padding: 8px 13px; }
+            footer .foot-grid { grid-template-columns: 1fr 1fr; gap: 40px 24px; }
+            footer .foot-brand { grid-column: 1 / -1; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .marquee .track, .badge svg { animation: none !important; }
+            .reveal { opacity: 1; transform: none; transition: none; }
+            .card, .card:hover { transition: none; }
+        }
+
+        .field { margin-bottom: 20px; }
+        label.lbl, form label.lbl { display: block; font-size: 10.5px; font-weight: 400; letter-spacing: 0.22em; text-transform: uppercase; color: var(--muted); margin: 0 0 9px; }
+        .optional { text-transform: none; letter-spacing: 0; color: var(--dim); }
+        input[type="text"], input[type="tel"], input[type="email"], input[type="date"], select, textarea {
+            width: 100%; font: inherit; font-size: 16px; padding: 14px 16px; border: 1px solid var(--line2); border-radius: 8px; background: var(--bg); color: var(--text);
+        }
+        input:focus, select:focus, textarea:focus { outline: none; border-color: var(--text); box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.08); }
+        textarea { min-height: 104px; resize: vertical; }
+        .hint { font-size: 13px; color: var(--dim); margin: 9px 0 0; line-height: 1.55; }
+        .panel { background: var(--bg2); border: 1px solid var(--line); padding: 32px; }
+        .panel h2 { font-size: 34px; font-weight: 400; }
+
+        main { max-width: 1120px; margin: 0 auto; padding: clamp(44px, 6vw, 84px) var(--gut) 80px; }
+        .intro { margin-bottom: 44px; }
+        .intro h1 { font-size: clamp(46px, 8vw, 116px); font-weight: 300; line-height: 0.96; margin-bottom: 20px; }
+        .intro p { margin: 0; max-width: 540px; font-size: 18px; color: var(--muted); }
+
+        .layout { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: start; }
+        .panel h2 { margin: 0 0 24px; }
+
+        .quick { display: grid; gap: 12px; margin-bottom: 32px; }
+        .quick .btn:not(.whatsapp) { background: transparent; color: var(--text); }
+        .quick .btn:not(.whatsapp):hover { background: var(--text); color: #0b0b0b; }
+
+        .details { list-style: none; margin: 0; padding: 0; display: grid; gap: 24px; }
+        .details li { font-size: 16px; line-height: 1.55; color: var(--text); }
+        .details .label { display: block; font-size: 10.5px; font-weight: 400; letter-spacing: 0.22em; text-transform: uppercase; color: var(--dim); margin-bottom: 5px; }
+        .details a { font-weight: 400; color: var(--text); }
+        .hours { margin: 0; padding: 0; list-style: none; }
+        .hours li { display: flex; justify-content: space-between; gap: 12px; margin-bottom: 4px; color: var(--muted); }
+
+        .btn.block { display: flex; width: 100%; }
+        .error { color: #ffa199; font-size: 14px; margin: 0 0 14px; display: none; }
+
+        @media (max-width: 820px) {
+            .layout { grid-template-columns: 1fr; }
+            .panel { padding: 26px 20px; }
+        }
+
+        .gate { max-width: 460px; }
+        .bar { display: flex; flex-wrap: wrap; gap: 14px; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+        .bar .left { display: flex; flex-wrap: wrap; gap: 14px; align-items: center; }
+        .small-btn { font: inherit; font-size: 10.5px; font-weight: 400; letter-spacing: 0.2em; text-transform: uppercase; padding: 11px 20px; border: 1px solid var(--line2); border-radius: 999px; background: transparent; color: var(--text); cursor: pointer; transition: background 0.25s, color 0.25s; }
+        .small-btn:hover { background: var(--text); color: #0b0b0b; }
+        .small-btn.danger:hover { background: #ffa199; border-color: #ffa199; }
+        .check { display: inline-flex; align-items: center; gap: 10px; font-size: 14px; color: var(--muted); cursor: pointer; }
+        .check input { width: 18px; height: 18px; accent-color: #e4e4e4; }
+        .day { margin: 44px 0 16px; font-size: clamp(30px, 4.4vw, 44px); font-style: italic; font-weight: 400; }
+        .day small { font-family: var(--sans); font-style: normal; font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--dim); margin-left: 12px; }
+        .section-title { margin: 56px 0 0; font-size: clamp(36px, 5vw, 56px); font-weight: 300; }
+        .bk { display: grid; grid-template-columns: 120px 1fr auto; gap: 22px; padding: 24px; border: 1px solid var(--line); background: var(--bg2); margin-bottom: 12px; align-items: start; }
+        .bk .when { font-family: var(--display); font-size: 36px; line-height: 1; }
+        .bk h3 { font-family: var(--sans); font-size: 18px; font-weight: 400; letter-spacing: 0.01em; margin: 0 0 6px; }
+        .bk p { margin: 3px 0; color: var(--muted); font-size: 15px; line-height: 1.55; overflow-wrap: anywhere; }
+        .bk p.hint { margin-top: 10px; font-size: 13px; color: var(--dim); }
+        .bk a { color: var(--text); }
+        .bk .acts { display: flex; flex-direction: column; gap: 8px; }
+        .past .bk { opacity: 0.65; }
+        .flash { margin: 18px 0 0; color: var(--muted); font-size: 15px; }
+        .flash.bad { color: #ffa199; }
+        @media (max-width: 700px) {
+            .bk { grid-template-columns: 1fr; gap: 12px; padding: 20px; }
+            .bk .acts { flex-direction: row; flex-wrap: wrap; }
+        }
+    </style>
+</head>
+<body>
+    <header class="site">
+        <a href="index.html" class="logo"><img class="mark" src="images/logo-mark.png" alt="" width="46" height="46"><span class="word">Kori's Place</span></a>
+        <button type="button" class="small-btn" id="signout" hidden>Sign out</button>
+    </header>
+
+    <main>
+        <section class="intro">
+            <h1>Your <em>bookings</em></h1>
+            <p id="lead">Enter your password to see who is booked in.</p>
+        </section>
+
+        <section class="panel gate" id="gate">
+            <form id="login" novalidate>
+                <div class="field">
+                    <label class="lbl" for="pw">Password</label>
+                    <input id="pw" type="password" autocomplete="current-password">
+                </div>
+                <p class="error" id="login-error" role="alert"></p>
+                <button type="submit" class="btn block">Show bookings</button>
+            </form>
+        </section>
+
+        <section id="board" hidden>
+            <div class="bar">
+                <div class="left">
+                    <button type="button" class="small-btn" id="refresh">Refresh</button>
+                    <label class="check"><input type="checkbox" id="past"> Show past bookings</label>
+                </div>
+                <p class="hint" id="updated" style="margin:0"></p>
+            </div>
+            <p class="flash" id="flash" role="status"></p>
+            <div id="list"></div>
+        </section>
+    </main>
+
+    <script>
+        /* EDIT THIS: the address of the booking server (the same one as apiUrl in book.html). */
+        const API_URL = "";
+
+        const $ = (id) => document.getElementById(id);
+        let token = '';
+        try { token = sessionStorage.getItem('kp-admin') || ''; } catch (e) {}
+        function keep(t) { try { if (t) sessionStorage.setItem('kp-admin', t); else sessionStorage.removeItem('kp-admin'); } catch (e) {} }
+
+        /* Everything from clients is put on the page as plain text, never as HTML. */
+        function el(tag, props, kids) {
+            const n = document.createElement(tag);
+            Object.assign(n, props || {});
+            (kids || []).forEach(k => { if (k) n.append(k); });
+            return n;
+        }
+        const money = (p) => '£' + (p / 100).toFixed(p % 100 ? 2 : 0);
+        function estimate(lo, hi) {
+            if (lo == null) return 'price to be agreed';
+            return lo === hi ? money(lo) : money(lo) + ' – ' + money(hi);
+        }
+        function waNumber(phone) {
+            let d = String(phone).replace(/\D/g, '');
+            if (d.startsWith('00')) d = d.slice(2); else if (d.startsWith('0')) d = '44' + d.slice(1);
+            return d;
+        }
+        const niceDate = (iso) => new Date(iso + 'T12:00:00').toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' });
+        function niceTime(t) { const [h, m] = t.split(':').map(Number); return ((h % 12) || 12) + ':' + String(m).padStart(2, '0') + ' ' + (h < 12 ? 'AM' : 'PM'); }
+
+        function signedIn(yes) {
+            $('gate').hidden = yes;
+            $('board').hidden = !yes;
+            $('signout').hidden = !yes;
+            $('lead').textContent = yes ? 'Paid bookings, with the details you need on the day.' : 'Enter your password to see who is booked in.';
+        }
+        function say(text, bad) { const f = $('flash'); f.textContent = text; f.className = 'flash' + (bad ? ' bad' : ''); }
+
+        function card(b, upcoming) {
+            const where = b.location_type === 'outcall'
+                ? el('p', {}, ['Outcall: ', el('a', { href: 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(b.address || ''), target: '_blank', rel: 'noopener', textContent: b.address || '' })])
+                : el('p', { textContent: 'At your place' });
+            const contact = el('p', {}, [
+                el('a', { href: 'tel:' + String(b.customer_phone).replace(/[^\d+]/g, ''), textContent: b.customer_phone }),
+                ' · ',
+                el('a', { href: 'https://wa.me/' + waNumber(b.customer_phone), target: '_blank', rel: 'noopener', textContent: 'WhatsApp' }),
+                b.customer_email ? ' · ' : '',
+                b.customer_email ? el('a', { href: 'mailto:' + encodeURIComponent(b.customer_email), textContent: b.customer_email }) : ''
+            ]);
+            const info = el('div', {}, [
+                el('h3', { textContent: b.customer_name }),
+                el('p', { textContent: b.style_name + (b.option_label ? ' – ' + b.option_label : '') }),
+                b.addons.length ? el('p', { textContent: 'Add-ons: ' + b.addons.join(', ') }) : '',
+                where,
+                contact,
+                b.notes ? el('p', { textContent: 'Notes: ' + b.notes }) : '',
+                el('p', { className: 'hint', textContent: 'Estimate ' + estimate(b.est_low_pence, b.est_high_pence) + '. Deposit paid: ' + money(b.deposit_pence) + '.' + (b.note ? ' ' + b.note : '') })
+            ]);
+            const acts = el('div', { className: 'acts' }, [
+                upcoming ? el('button', { type: 'button', className: 'small-btn danger', textContent: 'Cancel booking', onclick: () => cancel(b) }) : ''
+            ]);
+            return el('article', { className: 'bk' }, [el('div', { className: 'when', textContent: niceTime(b.appt_time) }), info, acts]);
+        }
+
+        function group(rows, today, upcoming) {
+            const out = [];
+            let last = '';
+            rows.forEach(b => {
+                if (b.appt_date !== last) {
+                    last = b.appt_date;
+                    out.push(el('h2', { className: 'day' }, [niceDate(b.appt_date), b.appt_date === today ? el('small', { textContent: 'Today' }) : '']));
+                }
+                out.push(card(b, upcoming));
+            });
+            return out;
+        }
+
+        function render(data) {
+            const upcoming = data.bookings.filter(b => b.appt_date >= data.today);
+            const past = data.bookings.filter(b => b.appt_date < data.today).reverse();
+            const nodes = [];
+            if (!upcoming.length) nodes.push(el('p', { className: 'flash', textContent: 'No upcoming bookings yet.' }));
+            nodes.push(...group(upcoming, data.today, true));
+            if ($('past').checked) {
+                nodes.push(el('h2', { className: 'section-title', textContent: 'Past bookings' }));
+                nodes.push(el('div', { className: 'past' }, past.length ? group(past, data.today, false) : [el('p', { className: 'flash', textContent: 'No past bookings.' })]));
+            }
+            $('list').replaceChildren(...nodes);
+            $('updated').textContent = 'Updated ' + new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
+        }
+
+        function call(path, opts) {
+            return fetch(API_URL.replace(/\/$/, '') + path, Object.assign({}, opts, {
+                headers: { authorization: 'Bearer ' + token, 'content-type': 'application/json' }
+            }));
+        }
+
+        let busy = false;
+        async function load(fromLogin) {
+            if (busy) return;
+            if (!API_URL) { $('login-error').textContent = 'This page is not connected to the booking server yet.'; $('login-error').style.display = 'block'; return; }
+            busy = true;
+            say('');
+            const slow = setTimeout(() => say('The booking server is waking up. This can take up to a minute.'), 4000);
+            try {
+                const res = await call('/api/admin/bookings' + ($('past').checked ? '?from=2020-01-01' : ''));
+                if (res.status === 401) { keep(''); token = ''; signedIn(false); const e = $('login-error'); e.textContent = fromLogin ? 'That password is not right.' : ''; e.style.display = fromLogin ? 'block' : 'none'; return; }
+                if (res.status === 404) { signedIn(false); const e = $('login-error'); e.textContent = 'The bookings list is switched off on the server.'; e.style.display = 'block'; return; }
+                if (res.status === 429) { signedIn(false); const e = $('login-error'); e.textContent = 'Too many wrong tries. Please wait a few minutes.'; e.style.display = 'block'; return; }
+                if (!res.ok) throw new Error('bad');
+                const data = await res.json();
+                signedIn(true);
+                render(data);
+                say('');
+            } catch (err) {
+                if (!$('board').hidden) say('Could not load the bookings. Check your connection and press Refresh.', true);
+                else { const e = $('login-error'); e.textContent = 'Could not reach the booking server. Please try again.'; e.style.display = 'block'; }
+            } finally {
+                clearTimeout(slow);
+                busy = false;
+            }
+        }
+
+        async function cancel(b) {
+            const ok = confirm('Cancel ' + b.customer_name + ' on ' + niceDate(b.appt_date) + ' at ' + niceTime(b.appt_time) + '?\n\nTheir deposit is NOT refunded automatically. Refund it in your Stripe dashboard if needed.');
+            if (!ok) return;
+            try {
+                const res = await call('/api/admin/bookings/' + encodeURIComponent(b.id) + '/cancel', { method: 'POST', body: '{}' });
+                if (!res.ok) throw new Error('bad');
+                say('Booking cancelled. The time is free again.');
+                await load();
+                say('Booking cancelled. The time is free again.');
+            } catch (err) {
+                say('Could not cancel that booking. Please try again.', true);
+            }
+        }
+
+        $('login').addEventListener('submit', (e) => {
+            e.preventDefault();
+            token = $('pw').value.trim();
+            if (!token) { const er = $('login-error'); er.textContent = 'Enter your password.'; er.style.display = 'block'; return; }
+            keep(token);
+            $('pw').value = '';
+            load(true);
+        });
+        $('refresh').addEventListener('click', () => load());
+        $('past').addEventListener('change', () => load());
+        $('signout').addEventListener('click', () => { keep(''); token = ''; $('list').replaceChildren(); signedIn(false); });
+        setInterval(() => { if (!$('board').hidden && !document.hidden) load(); }, 60000);
+
+        signedIn(false);
+        if (token) load();
+    </script>
+</body>
+</html>
